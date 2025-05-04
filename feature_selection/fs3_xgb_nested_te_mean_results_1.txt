@@ -1,0 +1,93 @@
+C:\Users\Johannes\PycharmProjects\kaggle-calories_2025-5\.venv\Scripts\python.exe C:\Users\Johannes\PycharmProjects\kaggle-calories_2025-5\feature_selection\fs3_xgb_nested_te_mean.py
+len(metadata)=73
+100%|██████████| 5/5 [00:14<00:00,  2.81s/it]
+len(nested_features_by_outer_fold)=5. Total duration so far: 14.79 seconds
+len(nested_features_column_names)=73
+df_train_features_dummy.shape=(750000, 73)
+len(FEATURES_ALREADY_FOUND)=0
+len(INITIAL_FEATURES_TO_DISCARD)=0
+Starting Forward Feature Selection.
+Original Features (always selected): ['Sex', 'Age', 'Height', 'Weight', 'Duration', 'Heart_Rate', 'Body_Temp']
+Initial features to select: []
+Initial features to discard: []
+Scoring baseline model
+Baseline score: -0.06009 ((750000, 7)) (41.78s)
+Round 1/18
+0  /72  Feature te_MEAN_Sex_Height_Body_Temp_no_fillna                                                         : score -0.06001 (0.00008)
+1  /72  Feature te_MEAN_Sex_Duration_Body_Temp_no_fillna                                                       : score -0.05983 (0.00025)
+2  /72  Feature te_MEAN_Sex_Age_Duration_Body_Temp_no_fillna                                                   : score -0.06064 (-0.00055)
+3  /72  Feature te_MEAN_Height_Duration_no_fillna                                                              : score -0.05985 (0.00024)
+4  /72  Feature te_MEAN_Sex_Age_no_fillna                                                                      : score -0.06005 (0.00004)
+5  /72  Feature te_MEAN_Weight_Duration_Heart_Rate_no_fillna                                                   : score -0.06047 (-0.00038)
+6  /72  Feature te_MEAN_Sex_Weight_Duration_Heart_Rate_no_fillna                                               : score -0.06061 (-0.00052)
+7  /72  Feature te_MEAN_Sex_Duration_Heart_Rate_no_fillna                                                      : score -0.06009 (0.00000)
+8  /72  Feature te_MEAN_Sex_Height_Heart_Rate_no_fillna                                                        : score -0.06025 (-0.00017)
+9  /72  Feature te_MEAN_Sex_Age_Weight_no_fillna                                                               : score -0.06001 (0.00008)
+10 /72  Feature te_MEAN_Sex_Age_Duration_no_fillna                                                             : score -0.05994 (0.00015)
+11 /72  Feature te_MEAN_Sex_Weight_Heart_Rate_no_fillna                                                        : score -0.06027 (-0.00018)
+12 /72  Feature te_MEAN_Sex_Duration_no_fillna                                                                 : score -0.05971 (0.00038)
+13 /72  Feature te_MEAN_Height_Heart_Rate_no_fillna                                                            : score -0.06018 (-0.00009)
+14 /72  Feature te_MEAN_Weight_Duration_no_fillna                                                              : score -0.05993 (0.00016)
+15 /72  Feature te_MEAN_Weight_Heart_Rate_no_fillna                                                            : score -0.06023 (-0.00014)
+16 /72  Feature te_MEAN_Heart_Rate_no_fillna                                                                   : score -0.06010 (-0.00001)
+17 /72  Feature te_MEAN_Height_Weight_Duration_no_fillna                                                       : score -0.06007 (0.00002)
+18 /72  Feature te_MEAN_Age_Weight_Heart_Rate_no_fillna                                                        : score -0.06018 (-0.00010)
+19 /72  Feature te_MEAN_Height_Duration_Body_Temp_no_fillna                                                    : score -0.06000 (0.00009)
+20 /72  Feature te_MEAN_Age_Duration_Heart_Rate_no_fillna                                                      : score -0.06072 (-0.00063)
+21 /72  Feature te_MEAN_Weight_Duration_Body_Temp_no_fillna                                                    : score -0.06003 (0.00006)
+22 /72  Feature te_MEAN_Sex_Body_Temp_no_fillna                                                                : score -0.05996 (0.00013)
+23 /72  Feature te_MEAN_Sex_Age_Weight_Duration_no_fillna                                                      : score -0.06034 (-0.00025)
+24 /72  Feature te_MEAN_Sex_Duration_Heart_Rate_Body_Temp_no_fillna                                            : score -0.06068 (-0.00059)
+25 /72  Feature te_MEAN_Age_Height_Heart_Rate_no_fillna                                                        : score -0.06011 (-0.00002)
+26 /72  Feature te_MEAN_Sex_Age_Height_Duration_no_fillna                                                      : score -0.06040 (-0.00032)
+27 /72  Feature te_MEAN_Sex_Weight_Duration_Body_Temp_no_fillna                                                : score -0.06017 (-0.00008)
+28 /72  Feature te_MEAN_Sex_Age_Heart_Rate_Body_Temp_no_fillna                                                 : score -0.06044 (-0.00036)
+29 /72  Feature te_MEAN_Age_Height_Duration_no_fillna                                                          : score -0.06032 (-0.00023)
+30 /72  Feature te_MEAN_Age_Height_Body_Temp_no_fillna                                                         : score -0.06002 (0.00007)
+31 /72  Feature te_MEAN_Sex_Height_Weight_Duration_no_fillna                                                   : score -0.06009 (0.00000)
+32 /72  Feature te_MEAN_Age_Heart_Rate_no_fillna                                                               : score -0.06031 (-0.00022)
+33 /72  Feature te_MEAN_Height_Weight_Body_Temp_no_fillna                                                      : score -0.05998 (0.00010)
+34 /72  Feature te_MEAN_Age_Heart_Rate_Body_Temp_no_fillna                                                     : score -0.06035 (-0.00026)
+35 /72  Feature te_MEAN_Height_Weight_no_fillna                                                                : score -0.05999 (0.00010)
+36 /72  Feature te_MEAN_Sex_Age_Height_no_fillna                                                               : score -0.06003 (0.00006)
+37 /72  Feature te_MEAN_Sex_Height_Duration_Heart_Rate_no_fillna                                               : score -0.06057 (-0.00048)
+38 /72  Feature te_MEAN_Height_Weight_Heart_Rate_no_fillna                                                     : score -0.06012 (-0.00004)
+39 /72  Feature te_MEAN_Duration_Heart_Rate_no_fillna                                                          : score -0.05997 (0.00012)
+40 /72  Feature te_MEAN_Body_Temp_no_fillna                                                                    : score -0.05998 (0.00010)
+41 /72  Feature te_MEAN_Sex_Height_Duration_Body_Temp_no_fillna                                                : score -0.06006 (0.00003)
+42 /72  Feature te_MEAN_Heart_Rate_Body_Temp_no_fillna                                                         : score -0.06010 (-0.00001)
+43 /72  Feature te_MEAN_Age_Duration_no_fillna                                                                 : score -0.06007 (0.00002)
+44 /72  Feature te_MEAN_Age_Height_no_fillna                                                                   : score -0.06004 (0.00005)
+45 /72  Feature te_MEAN_Sex_Age_Body_Temp_no_fillna                                                            : score -0.06015 (-0.00006)
+46 /72  Feature te_MEAN_Duration_Body_Temp_no_fillna                                                           : score -0.05983 (0.00026)
+47 /72  Feature te_MEAN_Sex_Weight_no_fillna                                                                   : score -0.05997 (0.00012)
+48 /72  Feature te_MEAN_Sex_Age_Heart_Rate_no_fillna                                                           : score -0.06029 (-0.00020)
+49 /72  Feature te_MEAN_Weight_no_fillna                                                                       : score -0.05998 (0.00011)
+50 /72  Feature te_MEAN_Sex_Height_Weight_no_fillna                                                            : score -0.05998 (0.00011)
+51 /72  Feature te_MEAN_Age_Height_Weight_no_fillna                                                            : score -0.06000 (0.00009)
+52 /72  Feature te_MEAN_Duration_no_fillna                                                                     : score -0.05977 (0.00032)
+53 /72  Feature te_MEAN_Duration_Heart_Rate_Body_Temp_no_fillna                                                : score -0.06051 (-0.00042)
+54 /72  Feature te_MEAN_Age_Weight_no_fillna                                                                   : score -0.06002 (0.00007)
+55 /72  Feature te_MEAN_Sex_Weight_Body_Temp_no_fillna                                                         : score -0.06005 (0.00004)
+56 /72  Feature te_MEAN_Sex_Height_no_fillna                                                                   : score -0.05999 (0.00009)
+57 /72  Feature te_MEAN_Sex_Heart_Rate_no_fillna                                                               : score -0.06006 (0.00003)
+58 /72  Feature te_MEAN_Sex_Weight_Duration_no_fillna                                                          : score -0.06002 (0.00007)
+59 /72  Feature te_MEAN_Age_no_fillna                                                                          : score -0.06006 (0.00003)
+60 /72  Feature te_MEAN_Age_Weight_Body_Temp_no_fillna                                                         : score -0.05999 (0.00010)
+61 /72  Feature te_MEAN_Sex_Height_Duration_no_fillna                                                          : score -0.05999 (0.00010)
+62 /72  Feature te_MEAN_Age_Duration_Body_Temp_no_fillna                                                       : score -0.06042 (-0.00033)
+63 /72  Feature te_MEAN_Height_Duration_Heart_Rate_no_fillna                                                   : score -0.06050 (-0.00041)
+64 /72  Feature te_MEAN_Age_Weight_Duration_no_fillna                                                          : score -0.06035 (-0.00026)
+65 /72  Feature te_MEAN_Height_Heart_Rate_Body_Temp_no_fillna                                                  : score -0.06015 (-0.00006)
+66 /72  Feature te_MEAN_Sex_Heart_Rate_Body_Temp_no_fillna                                                     : score -0.06010 (-0.00001)
+67 /72  Feature te_MEAN_Sex_Age_Duration_Heart_Rate_no_fillna                                                  : score -0.06087 (-0.00078)
+68 /72  Feature te_MEAN_Weight_Body_Temp_no_fillna                                                             : score -0.05998 (0.00011)
+69 /72  Feature te_MEAN_Weight_Heart_Rate_Body_Temp_no_fillna                                                  : score -0.06017 (-0.00008)
+70 /72  Feature te_MEAN_Age_Body_Temp_no_fillna                                                                : score -0.06001 (0.00007)
+71 /72  Feature te_MEAN_Height_no_fillna                                                                       : score -0.05997 (0.00012)
+72 /72  Feature te_MEAN_Height_Body_Temp_no_fillna                                                             : score -0.05998 (0.00011)
+Feature to select: te_MEAN_Sex_Duration_no_fillna, score: -0.059707222205509454
+Features selected: ['te_MEAN_Sex_Duration_no_fillna']
+Discarding worst features: ['te_MEAN_Sex_Duration_Heart_Rate_Body_Temp_no_fillna', 'te_MEAN_Age_Duration_Heart_Rate_no_fillna', 'te_MEAN_Sex_Age_Duration_Heart_Rate_no_fillna']
+Features to discard: ['te_MEAN_Sex_Duration_Heart_Rate_Body_Temp_no_fillna', 'te_MEAN_Age_Duration_Heart_Rate_no_fillna', 'te_MEAN_Sex_Age_Duration_Heart_Rate_no_fillna']
+Round 2/18
