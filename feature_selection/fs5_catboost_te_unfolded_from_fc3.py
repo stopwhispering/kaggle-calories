@@ -5,7 +5,12 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import OrdinalEncoder
 import random
 
-from calories.constants import PATH_TRAIN, PATH_ENSEMBLE_SUBMISSIONS, PATH_CACHE, PATH_FEATURES
+from calories.constants import (
+    PATH_TRAIN,
+    PATH_ENSEMBLE_SUBMISSIONS,
+    PATH_CACHE,
+    PATH_FEATURES,
+)
 from calories.preprocessing.dtypes import convert_sex
 from feature_creators.read_features_util import read_features
 from feature_creators.read_nested_features_util import read_nested_features
@@ -22,9 +27,7 @@ from trainers.xgb_trainer import XGBTrainer
 
 # continue pt1 with doubled n_estimators
 time_start = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 # df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -37,14 +40,14 @@ feature_store = FeatureStore(
     # path_features_by_fold=PATH_FEATURES_BY_FOLD,
 )
 df_train_features, _df_test_features = feature_store.read_features(
-                                                     criteria={"type": ("te",)}
+    criteria={"type": ("te",)}
 )
 # _cat_cols = df_train_features.select_dtypes("object").columns.tolist()
 # df_train_features[_cat_cols] = df_train_features[_cat_cols].astype("category")
 print(f"{df_train_features.shape=}")
 
 FEATURES_ALREADY_FOUND = []
-print(f'{len(FEATURES_ALREADY_FOUND)=}')
+print(f"{len(FEATURES_ALREADY_FOUND)=}")
 
 INITIAL_FEATURES_TO_DISCARD = [
     # already found to discard
@@ -52,18 +55,22 @@ INITIAL_FEATURES_TO_DISCARD = [
 
 
 # FFS
-def score_dataset(df_train: pd.DataFrame,
-                  ser_targets_train: pd.Series = ser_targets_train):
+def score_dataset(
+    df_train: pd.DataFrame, ser_targets_train: pd.Series = ser_targets_train
+):
     params_catboost = {
-        'loss_function': 'RMSE',
-
-        'learning_rate': 0.03,
+        "loss_function": "RMSE",
+        "learning_rate": 0.03,
     }
     trainer = CatBoostTrainer(
-        params={"random_state": 42, "n_estimators": 6000,
-                # "verbose": -200,
-                "verbose": 100,
-                "early_stopping_rounds": 6} | params_catboost,
+        params={
+            "random_state": 42,
+            "n_estimators": 6000,
+            # "verbose": -200,
+            "verbose": 100,
+            "early_stopping_rounds": 6,
+        }
+        | params_catboost,
         scoring_fn=root_mean_squared_log_error,
         log_transform_targets=True,  # True -> expm1 is applied to preds after predicting before scoring
         early_stop=True,

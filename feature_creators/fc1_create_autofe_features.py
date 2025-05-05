@@ -8,9 +8,7 @@ import os
 import pickle
 
 time_start = time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -26,9 +24,9 @@ potential_features = fe.find_potential_features(
 )
 
 fe = fe.add_features(potential_features).fit(df_train)
-df_train_fe = fe.transform(df_train,
-                           identify_highly_correlated_features=True,
-                           max_corr=0.9999999)
+df_train_fe = fe.transform(
+    df_train, identify_highly_correlated_features=True, max_corr=0.9999999
+)
 print(f"{df_train_fe.shape=}")
 
 df_test_fe = fe.transform(df_test)
@@ -73,7 +71,8 @@ def save(ser_train, ser_test, colname):
 for colname in df_train_fe.columns:
     if colname not in df_train.columns:
         print(f"Saving {colname}")
-        save(df_train_fe[colname],
-             df_test_fe[colname],
-             colname,
-             )
+        save(
+            df_train_fe[colname],
+            df_test_fe[colname],
+            colname,
+        )

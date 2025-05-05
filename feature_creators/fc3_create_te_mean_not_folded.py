@@ -8,18 +8,18 @@ import pandas as pd
 from sklearn.model_selection import KFold
 from tqdm import tqdm
 
-from calories.constants import PATH_TRAIN, PATH_TEST, PATH_FEATURES  # , PATH_FEATURES_BY_FOLD
+from calories.constants import (
+    PATH_TRAIN,
+    PATH_TEST,
+    PATH_FEATURES,
+)  # , PATH_FEATURES_BY_FOLD
 from calories.preprocessing.dtypes import convert_sex
 from my_preprocessing.target_encoding import CustomTargetEncoder
 
 
 if __name__ == "__main__":
-    df_train = (
-        pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-    )
-    ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")[
-        "Calories"
-    ]
+    df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
+    ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
     df_test = pd.read_csv(PATH_TEST).set_index("id")
 
     df_train = convert_sex(df_train)
@@ -81,10 +81,12 @@ if __name__ == "__main__":
         te = CustomTargetEncoder(
             cols=feature_list,
             agg="mean",
-            kfold_splits=KFold(shuffle=True, random_state=42, n_splits=N_INNER_FOLDS).split(df_train_current),
+            kfold_splits=KFold(
+                shuffle=True, random_state=42, n_splits=N_INNER_FOLDS
+            ).split(df_train_current),
             smooth=SMOOTH,
             fillna=False,
-            )
+        )
         te.fit(df_train_current, ser_targets_train)
         ser_te_train = te.transform(df_train_current).astype(DTYPE)
         # ser_te_val = te.transform(df_val_current_fold)
@@ -97,7 +99,6 @@ if __name__ == "__main__":
         # train_folds.append(ser_te_train)
         # # val_folds.append(ser_te_val)
         # test_folds.append(ser_te_test)
-
 
         filename_prefix = f"{ser_te_train.name}_{N_INNER_FOLDS}_inner_folds"  # noqa
         metadata = {
@@ -114,7 +115,6 @@ if __name__ == "__main__":
             "dtype": DTYPE,
             "created_at": pd.Timestamp.now(),
             "created_by_script": os.path.basename(__file__),
-
             "fillna": False,
         }
 
@@ -134,9 +134,13 @@ if __name__ == "__main__":
         # ser_te_train = train_folds[i]
         # ser_te_val = val_folds[i]
         # ser_te_test = test_folds[i]
-        ser_te_train.to_frame().to_parquet(PATH_FEATURES / f"{filename_prefix}_train.parquet")
+        ser_te_train.to_frame().to_parquet(
+            PATH_FEATURES / f"{filename_prefix}_train.parquet"
+        )
         # ser_te_val.to_frame().to_parquet(PATH_FEATURES / f"{filename_prefix}_val.parquet")
-        ser_te_test.to_frame().to_parquet(PATH_FEATURES / f"{filename_prefix}_test.parquet")
+        ser_te_test.to_frame().to_parquet(
+            PATH_FEATURES / f"{filename_prefix}_test.parquet"
+        )
         # ser_te_train.to_pickle(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_train_{i}.pkl")
         # ser_te_val.to_pickle(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_val_{i}.pkl")
         # ser_te_test.to_pickle(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_test_{i}.pkl")

@@ -2,7 +2,12 @@ import time
 import pandas as pd
 from sklearn.metrics import root_mean_squared_log_error
 import numpy as np
-from calories.constants import PATH_TRAIN, PATH_TEST, PATH_PREDS_FOR_ENSEMBLES, PATH_CACHE
+from calories.constants import (
+    PATH_TRAIN,
+    PATH_TEST,
+    PATH_PREDS_FOR_ENSEMBLES,
+    PATH_CACHE,
+)
 from calories.preprocessing.dtypes import convert_sex
 from trainers.lgbm_trainer import LGBMTrainer
 from trainers.metrics.metrics_lgbm import rmsle_lgbm
@@ -10,9 +15,7 @@ from trainers.xgb_trainer import XGBTrainer
 import optuna
 
 time_start_overall = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -37,25 +40,26 @@ def objective(trial):
         "reg_alpha": trial.suggest_int("reg_alpha", 2, 15),
         # "reg_lambda": trial.suggest_float("reg_lambda", 0.01, 0.1),
         "subsample": trial.suggest_float("subsample", 0, 1.0),
-
         "colsample_bytree": trial.suggest_float("colsample_bytree", 0.15, 1.0),
-        "colsample_bynode": trial.suggest_float("colsample_bytree", 0.15, 1.0),  # todo fix this
+        "colsample_bynode": trial.suggest_float(
+            "colsample_bytree", 0.15, 1.0
+        ),  # todo fix this
         # "n_estimators": trial.suggest_int("n_estimators", 5, 1500),
-
         # "num_leaves": trial.suggest_int("num_leaves", 2, 2048),
         # "max_bin": trial.suggest_int("max_bin", 32, 2048),
     }
 
     trainer = XGBTrainer(
-        params={"random_state": 42,
-                "verbosity": 0,
-                "n_estimators": 20_000,
-                # 'objective': 'reg:squaredlogerror',
-                'eval_metric': 'rmsle',
-                # 'reg_lambda': 1,
-                "early_stopping_rounds": 100
-                }  #
-               | params_xgb,
+        params={
+            "random_state": 42,
+            "verbosity": 0,
+            "n_estimators": 20_000,
+            # 'objective': 'reg:squaredlogerror',
+            "eval_metric": "rmsle",
+            # 'reg_lambda': 1,
+            "early_stopping_rounds": 100,
+        }  #
+        | params_xgb,
         scoring_fn=root_mean_squared_log_error,
         early_stop=True,
         use_gpu=True,

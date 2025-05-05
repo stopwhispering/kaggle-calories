@@ -10,36 +10,46 @@ from trainers.metrics.metrics_lgbm import rmsle_lgbm
 from trainers.xgb_trainer import XGBTrainer
 
 time_start_overall = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
 df_train = convert_sex(df_train)
 df_test = convert_sex(df_test)
 
-df_train_features, df_test_features = read_features(column_names=['Combine_Sex_Duration', 'Multiply_Weight_Duration', 'Plus_Age_Duration'],  # all
-                                                    include_original=False,
-                                                    shuffle=True)
-_cat_cols = df_train_features.select_dtypes('object').columns.tolist()
-df_train_features[_cat_cols] = df_train_features[_cat_cols].astype('category')
-df_test_features[_cat_cols] = df_test_features[_cat_cols].astype('category')
+df_train_features, df_test_features = read_features(
+    column_names=[
+        "Combine_Sex_Duration",
+        "Multiply_Weight_Duration",
+        "Plus_Age_Duration",
+    ],  # all
+    include_original=False,
+    shuffle=True,
+)
+_cat_cols = df_train_features.select_dtypes("object").columns.tolist()
+df_train_features[_cat_cols] = df_train_features[_cat_cols].astype("category")
+df_test_features[_cat_cols] = df_test_features[_cat_cols].astype("category")
 df_train = pd.concat([df_train, df_train_features], axis=1)
 df_test = pd.concat([df_test, df_test_features], axis=1)
 
-print(f'{df_train.shape=}, {df_test.shape=}')
+print(f"{df_train.shape=}, {df_test.shape=}")
 duration_loading_data = str(int(time.time() - time_start_overall))
 print(f"{duration_loading_data=}")
 time_start_training = time.time()
 
 params_xgb = {
     # "eval_metric": 'rmsle',
-    "eval_metric": 'rmse',
+    "eval_metric": "rmse",
 }
 
 trainer = XGBTrainer(
-    params={"random_state": 42, "verbosity": 0, "n_estimators": 5_000, "early_stopping_rounds": 100} | params_xgb,
+    params={
+        "random_state": 42,
+        "verbosity": 0,
+        "n_estimators": 5_000,
+        "early_stopping_rounds": 100,
+    }
+    | params_xgb,
     # scoring_fn=root_mean_squared_log_error,
     scoring_fn=root_mean_squared_error,
     early_stop=True,
@@ -55,7 +65,7 @@ trainer = XGBTrainer(
         df_test=df_test,
     )
 )
-print(f'{score=:.5f}')
+print(f"{score=:.5f}")
 ser_oof_predictions = np.expm1(df_oof_predictions["pred"])
 score = root_mean_squared_log_error(ser_targets_train, ser_oof_predictions)
 print(f"{score=:.5f}")
@@ -64,12 +74,18 @@ duration_training = time.time() - time_start_training
 print(f"{score=:.5f}, {best_iterations=}, {duration_training=}")
 
 duration_all = str(int(time.time() - time_start_overall))
-filename_prefix = __file__.split('\\')[-1][:-3]  # remove .py
+filename_prefix = __file__.split("\\")[-1][:-3]  # remove .py
 if filename_prefix.startswith("run_"):
     filename_prefix = filename_prefix[4:]
-df_oof_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl")
-df_test_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl")
-open(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a").close()
+df_oof_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl"
+)
+df_test_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl"
+)
+open(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a"
+).close()
 
 # df_submission = df_test_predictions['pred'].reset_index().rename(
 #     columns={"pred": "Calories"}

@@ -20,9 +20,7 @@ from trainers.xgb_trainer import XGBTrainer
 
 # continue pt1 with doubled n_estimators
 time_start = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 # df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -31,16 +29,17 @@ df_train = convert_sex(df_train)
 # df_test = convert_sex(df_test)
 
 
-df_train_features, _df_test_features = read_features(include_original=False,
-                                                     # type_="binning",
-                                                     shuffle=True)
+df_train_features, _df_test_features = read_features(
+    include_original=False,
+    # type_="binning",
+    shuffle=True,
+)
 _cat_cols = df_train_features.select_dtypes("object").columns.tolist()
 df_train_features[_cat_cols] = df_train_features[_cat_cols].astype("category")
 print(f"{df_train_features.shape=}")
 
-FEATURES_ALREADY_FOUND = [
-]
-print(f'{len(FEATURES_ALREADY_FOUND)=}')
+FEATURES_ALREADY_FOUND = []
+print(f"{len(FEATURES_ALREADY_FOUND)=}")
 
 INITIAL_FEATURES_TO_DISCARD = [
     # already found to discard
@@ -48,8 +47,9 @@ INITIAL_FEATURES_TO_DISCARD = [
 
 
 # FFS
-def score_dataset(df_train: pd.DataFrame,
-                  ser_targets_train: pd.Series = ser_targets_train):
+def score_dataset(
+    df_train: pd.DataFrame, ser_targets_train: pd.Series = ser_targets_train
+):
     params_xgb = {
         # "max_depth": 11,
         # "colsample_bytree": 0.8,
@@ -57,13 +57,13 @@ def score_dataset(df_train: pd.DataFrame,
         # # "n_estimators": 10_000,
         # "learning_rate": 0.13,  # 0.01,
         # # "early_stopping_rounds": 20,
-        "eval_metric": 'rmsle',
+        "eval_metric": "rmsle",
         # "reg_alpha": 0.98,
         # "reg_lambda": 0.12,
     }
     trainer = XGBTrainer(
         params={"random_state": 42, "verbosity": 0, "n_estimators": 5_000}  # 50
-               | params_xgb,  # mae, not rmse
+        | params_xgb,  # mae, not rmse
         scoring_fn=root_mean_squared_log_error,
         early_stop=True,
         use_gpu=True,

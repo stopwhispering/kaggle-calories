@@ -1,0 +1,176 @@
+import pandas as pd
+from sklearn.impute import KNNImputer
+from sklearn.metrics import root_mean_squared_error, root_mean_squared_log_error
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import OrdinalEncoder
+import random
+
+from calories.constants import PATH_TRAIN, PATH_ENSEMBLE_SUBMISSIONS, PATH_CACHE, PATH_FEATURES
+from calories.preprocessing.dtypes import convert_sex
+from feature_creators.read_features_util import read_features
+from feature_creators.read_nested_features_util import read_nested_features
+from my_feature_selection.ffs import ForwardFeatureSelector
+from my_preprocessing.fe import FeatureEngineer
+from my_preprocessing.feature_store.feature_store import FeatureStore
+from my_preprocessing.target_encoding import CustomTargetEncoder
+import pickle
+import time
+import gc
+
+from trainers.catboost_trainer import CatBoostTrainer
+from trainers.xgb_trainer import XGBTrainer
+
+# continue pt1 with doubled n_estimators
+time_start = time.time()
+df_train = (
+    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
+)
+ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
+# df_test = pd.read_csv(PATH_TEST).set_index("id")
+
+
+df_train = convert_sex(df_train)
+# df_test = convert_sex(df_test)
+
+feature_store = FeatureStore(
+    path_features=PATH_FEATURES,C:\Users\Johannes\PycharmProjects\kaggle-calories_2025-5\.venv\Scripts\python.exe C:\Users\Johannes\PycharmProjects\kaggle-calories_2025-5\feature_selection\fs6_catboost_polynomials.py
+df_train_features.shape=(750000, 30)
+len(FEATURES_ALREADY_FOUND)=0
+Starting Forward Feature Selection.
+Original Features (always selected): ['Sex', 'Age', 'Height', 'Weight', 'Duration', 'Heart_Rate', 'Body_Temp']
+Initial features to select: []
+Initial features to discard: []
+Scoring baseline model
+Baseline score: 0.05956 ((750000, 7)) (31.95s)
+Round 0
+0  /29  Feature poly_Age2_Body_Temp                                                                            : score 0.05956 (-0.00000)
+1  /29  Feature poly_Age2_Duration                                                                             : score 0.05955 (-0.00001)
+2  /29  Feature poly_Age2_Heart_Rate                                                                           : score 0.05960 (0.00004)
+3  /29  Feature poly_Age2_Height                                                                               : score 0.05961 (0.00005)
+4  /29  Feature poly_Age2_Weight                                                                               : score 0.05960 (0.00005)
+5  /29  Feature poly_Age_Body_Temp2                                                                            : score 0.05957 (0.00002)
+6  /29  Feature poly_Age_Duration2                                                                             : score 0.05969 (0.00013)
+7  /29  Feature poly_Age_Heart_Rate2                                                                           : score 0.05966 (0.00010)
+8  /29  Feature poly_Age_Height2                                                                               : score 0.05956 (-0.00000)
+9  /29  Feature poly_Age_Weight2                                                                               : score 0.05958 (0.00002)
+10 /29  Feature poly_Duration2_Body_Temp                                                                       : score 0.05954 (-0.00002)
+11 /29  Feature poly_Duration2_Heart_Rate                                                                      : score 0.05967 (0.00011)
+12 /29  Feature poly_Duration_Body_Temp2                                                                       : score 0.05955 (-0.00001)
+13 /29  Feature poly_Duration_Heart_Rate2                                                                      : score 0.05974 (0.00018)
+14 /29  Feature poly_Heart_Rate2_Body_Temp                                                                     : score 0.05964 (0.00008)
+15 /29  Feature poly_Heart_Rate_Body_Temp2                                                                     : score 0.05959 (0.00004)
+16 /29  Feature poly_Height2_Body_Temp                                                                         : score 0.05956 (0.00000)
+17 /29  Feature poly_Height2_Duration                                                                          : score 0.05955 (-0.00001)
+18 /29  Feature poly_Height2_Heart_Rate                                                                        : score 0.05956 (0.00001)
+19 /29  Feature poly_Height2_Weight                                                                            : score 0.05952 (-0.00003)
+20 /29  Feature poly_Height_Body_Temp2                                                                         : score 0.05952 (-0.00004)
+21 /29  Feature poly_Height_Duration2                                                                          : score 0.05950 (-0.00006)
+22 /29  Feature poly_Height_Heart_Rate2                                                                        : score 0.05959 (0.00003)
+23 /29  Feature poly_Height_Weight2                                                                            : score 0.05954 (-0.00002)
+24 /29  Feature poly_Weight2_Body_Temp                                                                         : score 0.05959 (0.00003)
+25 /29  Feature poly_Weight2_Duration                                                                          : score 0.05953 (-0.00002)
+26 /29  Feature poly_Weight2_Heart_Rate                                                                        : score 0.05956 (0.00000)
+27 /29  Feature poly_Weight_Body_Temp2                                                                         : score 0.05952 (-0.00004)
+28 /29  Feature poly_Weight_Duration2                                                                          : score 0.05959 (0.00003)
+29 /29  Feature poly_Weight_Heart_Rate2                                                                        : score 0.05954 (-0.00002)
+Feature to select: poly_Height_Duration2, score: -0.05950034982422145
+Features selected: ['poly_Height_Duration2']
+Round 1
+0  /28  Feature poly_Age2_Body_Temp                                                                            : score 0.05955 (0.00005)
+1  /28  Feature poly_Age2_Duration                                                                             : score 0.05950 (0.00000)
+2  /28  Feature poly_Age2_Heart_Rate                                                                           : score 0.05962 (0.00012)
+3  /28  Feature poly_Age2_Height                                                                               : score 0.05959 (0.00009)
+4  /28  Feature poly_Age2_Weight                                                                               : score 0.05962 (0.00012)
+5  /28  Feature poly_Age_Body_Temp2                                                                            : score 0.05963 (0.00013)
+6  /28  Feature poly_Age_Duration2                                                                             : score 0.05963 (0.00013)
+7  /28  Feature poly_Age_Heart_Rate2                                                                           : score 0.05967 (0.00017)
+8  /28  Feature poly_Age_Height2                                                                               : score 0.05966 (0.00016)
+9  /28  Feature poly_Age_Weight2                                                                               : score 0.05953 (0.00003)
+10 /28  Feature poly_Duration2_Body_Temp                                                                       : score 0.05961 (0.00011)
+11 /28  Feature poly_Duration2_Heart_Rate                                                                      : score 0.05969 (0.00019)
+12 /28  Feature poly_Duration_Body_Temp2                                                                       : score 0.05963 (0.00013)
+13 /28  Feature poly_Duration_Heart_Rate2                                                                      : score 0.05968 (0.00018)
+14 /28  Feature poly_Heart_Rate2_Body_Temp                                                                     : score 0.05964 (0.00014)
+15 /28  Feature poly_Heart_Rate_Body_Temp2                                                                     : score 0.05960 (0.00010)
+16 /28  Feature poly_Height2_Body_Temp                                                                         : score 0.05957 (0.00007)
+17 /28  Feature poly_Height2_Duration                                                                          : score 0.05958 (0.00008)
+18 /28  Feature poly_Height2_Heart_Rate                                                                        : score 0.05966 (0.00016)
+19 /28  Feature poly_Height2_Weight                                                                            : score 0.05955 (0.00005)
+20 /28  Feature poly_Height_Body_Temp2                                                                         : score 0.05953 (0.00003)
+21 /28  Feature poly_Height_Heart_Rate2                                                                        : score 0.05961 (0.00011)
+22 /28  Feature poly_Height_Weight2                                                                            : score 0.05954 (0.00004)
+23 /28  Feature poly_Weight2_Body_Temp                                                                         : score 0.05955 (0.00005)
+24 /28  Feature poly_Weight2_Duration                                                                          : score 0.05958 (0.00008)
+25 /28  Feature poly_Weight2_Heart_Rate                                                                        : score 0.05959 (0.00009)
+26 /28  Feature poly_Weight_Body_Temp2                                                                         : score 0.05958 (0.00008)
+27 /28  Feature poly_Weight_Duration2                                                                          : score 0.05959 (0.00009)
+28 /28  Feature poly_Weight_Heart_Rate2                                                                        : score 0.05957 (0.00007)
+Feature to select: poly_Age2_Duration, score: -0.05950184552860273
+Features selected: ['poly_Height_Duration2', 'poly_Age2_Duration']
+Round 2
+0  /27  Feature poly_Age2_Body_Temp                                                                            : score 0.05949 (-0.00001)
+
+    # path_features_by_fold=PATH_FEATURES_BY_FOLD,
+)
+df_train_features, _df_test_features = feature_store.read_features(
+                                                     criteria={"type": ("polynomial",)}  # fc4
+)
+# _cat_cols = df_train_features.select_dtypes("object").columns.tolist()
+# df_train_features[_cat_cols] = df_train_features[_cat_cols].astype("category")
+print(f"{df_train_features.shape=}")
+
+FEATURES_ALREADY_FOUND = []
+print(f'{len(FEATURES_ALREADY_FOUND)=}')
+
+INITIAL_FEATURES_TO_DISCARD = [
+    # already found to discard
+]
+
+
+# FFS
+def score_dataset(df_train: pd.DataFrame,
+                  ser_targets_train: pd.Series = ser_targets_train):
+    params_catboost = {
+        'loss_function': 'RMSE',
+
+        'learning_rate': 0.03,
+    }
+    trainer = CatBoostTrainer(
+        params={"random_state": 42, "n_estimators": 6000,
+                # "verbose": -200,
+                "verbose": 100,
+                "early_stopping_rounds": 6} | params_catboost,
+        scoring_fn=root_mean_squared_log_error,
+        log_transform_targets=True,  # True -> expm1 is applied to preds after predicting before scoring
+        early_stop=True,
+        use_gpu=True,
+        silent=True,
+        clip_preds=(1.0, 314.0),
+    )
+
+    (score, best_iterations, df_oof_predictions, df_test_predictions, _, _) = (
+        trainer.train_and_score(
+            df_train=df_train,
+            ser_targets_train=ser_targets_train,
+            # splits=KFold(n_splits=12, shuffle=True, random_state=42).split(df_train),
+        )
+    )
+    # print(f"{score=:.5f}, {best_iterations=}")
+
+    return -score
+
+
+ffs = ForwardFeatureSelector(
+    df_train_all_features=pd.concat([df_train, df_train_features], axis=1),
+    model_fn=score_dataset,
+    original_features=df_train.columns.tolist(),
+    initial_features_to_select=FEATURES_ALREADY_FOUND,
+    # initial_features_to_select=
+    max_features_to_select=25,
+    stop_at_max_score=False,  # Make False next time
+    initial_features_to_discard=INITIAL_FEATURES_TO_DISCARD,
+    # save_intermediate_results=True,
+    discard_worst_n_features_each_round=0,
+)
+df_results: pd.DataFrame = ffs.start()
+df_results.to_excel(PATH_CACHE / "df_results_fs6.xlsx", index=False)

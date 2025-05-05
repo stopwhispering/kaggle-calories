@@ -10,16 +10,14 @@ from trainers.lgbm_trainer import LGBMTrainer
 from trainers.metrics.metrics_lgbm import rmsle_lgbm
 from trainers.xgb_trainer import XGBTrainer
 import warnings
+
 time_start_overall = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
 df_train = convert_sex(df_train)
 df_test = convert_sex(df_test)
-
 
 
 # df_train_features, df_test_features = read_features(column_names=None,  # all
@@ -33,8 +31,9 @@ df_test = convert_sex(df_test)
 
 nested_features_by_outer_fold: list[
     # column_names=column_names,
-    tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]] = read_nested_features(
-    agg='mean',
+    tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
+] = read_nested_features(
+    agg="mean",
     # column_names=column_names,
     include_original=False,
 )
@@ -51,10 +50,13 @@ df_train_features_dummy = pd.DataFrame(
     columns=nested_features_column_names,
 )
 
+
 def add_target_encoding(df_train, df_val, df_test, ser_targets_train, i_fold: int):
     # todo separate module
     selected_columns = nested_features_column_names
-    df_te_train_fold, df_te_val_fold, df_te_test_fold = nested_features_by_outer_fold[i_fold]
+    df_te_train_fold, df_te_val_fold, df_te_test_fold = nested_features_by_outer_fold[
+        i_fold
+    ]
 
     df_te_train_fold_selected = df_te_train_fold[selected_columns]
     df_te_val_fold_selected = df_te_val_fold[selected_columns]
@@ -62,7 +64,9 @@ def add_target_encoding(df_train, df_val, df_test, ser_targets_train, i_fold: in
 
     # make sure the columns really are dummy, and make sure we don't forget a dummy...
     assert (df_train[selected_columns] == 1).all().all()
-    assert set(df_train.columns[(df_train == 1).all()].tolist()) == set(selected_columns)
+    assert set(df_train.columns[(df_train == 1).all()].tolist()) == set(
+        selected_columns
+    )
 
     df_train[selected_columns] = df_te_train_fold_selected
     df_val[selected_columns] = df_te_val_fold_selected
@@ -71,18 +75,11 @@ def add_target_encoding(df_train, df_val, df_test, ser_targets_train, i_fold: in
             warnings.simplefilter("ignore", category=pd.errors.PerformanceWarning)
             df_test[selected_columns] = df_te_test_fold_selected.values
 
-    print(f'{df_train.shape=}')
+    print(f"{df_train.shape=}")
     return df_train, df_val, df_test
 
 
-
-
-
-
-
-
-print(f'{df_train.shape=}, {df_test.shape=}')
-
+print(f"{df_train.shape=}, {df_test.shape=}")
 
 
 duration_loading_data = str(int(time.time() - time_start_overall))
@@ -90,7 +87,7 @@ print(f"{duration_loading_data=}")
 time_start_training = time.time()
 
 params_lgbm = {
-    "metric": 'custom',   # for rmsle
+    "metric": "custom",  # for rmsle
 }
 
 trainer = LGBMTrainer(
@@ -105,7 +102,7 @@ trainer = LGBMTrainer(
     clip_preds=(0, None),
 )
 
-print(f'{pd.concat([df_train, df_train_features_dummy], axis=1).shape=}')
+print(f"{pd.concat([df_train, df_train_features_dummy], axis=1).shape=}")
 (score, best_iterations, df_oof_predictions, df_test_predictions, _, _) = (
     trainer.train_and_score(
         # df_train=df_train,
@@ -118,12 +115,18 @@ duration_training = time.time() - time_start_training
 print(f"{score=:.5f}, {best_iterations=}, {duration_training=}")
 
 duration_all = str(int(time.time() - time_start_overall))
-filename_prefix = __file__.split('\\')[-1][:-3]  # remove .py
+filename_prefix = __file__.split("\\")[-1][:-3]  # remove .py
 if filename_prefix.startswith("run_"):
     filename_prefix = filename_prefix[4:]
-df_oof_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl")
-df_test_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl")
-open(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a").close()
+df_oof_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl"
+)
+df_test_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl"
+)
+open(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a"
+).close()
 
 # df_submission = df_test_predictions['pred'].reset_index().rename(
 #     columns={"pred": "Calories"}

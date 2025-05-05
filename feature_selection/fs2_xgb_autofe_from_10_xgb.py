@@ -20,9 +20,7 @@ from trainers.xgb_trainer import XGBTrainer
 
 # continue pt1 with doubled n_estimators
 time_start = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 # df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -31,17 +29,21 @@ df_train = convert_sex(df_train)
 # df_test = convert_sex(df_test)
 
 
-df_train_features, _df_test_features = read_features(include_original=False,
-                                                     # type_="binning",
-                                                     shuffle=True)
+df_train_features, _df_test_features = read_features(
+    include_original=False,
+    # type_="binning",
+    shuffle=True,
+)
 _cat_cols = df_train_features.select_dtypes("object").columns.tolist()
 df_train_features[_cat_cols] = df_train_features[_cat_cols].astype("category")
 print(f"{df_train_features.shape=}")
 
 FEATURES_ALREADY_FOUND = [
-    'Combine_Sex_Duration', 'Multiply_Weight_Duration', 'Plus_Age_Duration'  # fs1
+    "Combine_Sex_Duration",
+    "Multiply_Weight_Duration",
+    "Plus_Age_Duration",  # fs1
 ]
-print(f'{len(FEATURES_ALREADY_FOUND)=}')
+print(f"{len(FEATURES_ALREADY_FOUND)=}")
 
 INITIAL_FEATURES_TO_DISCARD = [
     # already found to discard
@@ -49,22 +51,27 @@ INITIAL_FEATURES_TO_DISCARD = [
 
 
 # FFS
-def score_dataset(df_train: pd.DataFrame,
-                  ser_targets_train: pd.Series = ser_targets_train):
+def score_dataset(
+    df_train: pd.DataFrame, ser_targets_train: pd.Series = ser_targets_train
+):
     params_xgb = {
-        "eval_metric": 'rmse',
-
+        "eval_metric": "rmse",
         # https://www.kaggle.com/code/andrewsokolovsky/catboost-xgboost-lightgbm-rmsle-0-05684
-        'max_depth': 10,
-        'colsample_bytree': 0.7,
-        'subsample': 0.9,
-        'learning_rate': 0.02,
-        'gamma': 0.01,
-        'max_delta_step': 2,
+        "max_depth": 10,
+        "colsample_bytree": 0.7,
+        "subsample": 0.9,
+        "learning_rate": 0.02,
+        "gamma": 0.01,
+        "max_delta_step": 2,
     }
     trainer = XGBTrainer(
-        params={"random_state": 42, "verbosity": 0, "n_estimators": 5_000, "early_stopping_rounds": 20}  # expected ~450 iterations
-               | params_xgb,  # mae, not rmse
+        params={
+            "random_state": 42,
+            "verbosity": 0,
+            "n_estimators": 5_000,
+            "early_stopping_rounds": 20,
+        }  # expected ~450 iterations
+        | params_xgb,  # mae, not rmse
         scoring_fn=root_mean_squared_log_error,
         log_transform_targets=True,  # True -> expm1 is applied to preds after predicting before scoring
         early_stop=True,

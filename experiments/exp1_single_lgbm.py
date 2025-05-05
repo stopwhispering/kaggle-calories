@@ -8,9 +8,7 @@ from trainers.lgbm_trainer import LGBMTrainer
 from trainers.metrics.metrics_lgbm import rmsle_lgbm
 
 time_start_overall = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -22,7 +20,7 @@ print(f"{duration_loading_data=}")
 time_start_training = time.time()
 
 params_lgbm = {
-    "metric": 'custom',   # for rmsle
+    "metric": "custom",  # for rmsle
 }
 
 trainer = LGBMTrainer(

@@ -1,5 +1,5 @@
 [project]
-name = "kaggle-calories-2025-5"
+name = "calories"
 version = "0.1.0"
 description = ""
 authors = [

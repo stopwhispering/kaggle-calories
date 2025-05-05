@@ -14,12 +14,8 @@ from my_preprocessing.target_encoding import CustomTargetEncoder
 
 
 if __name__ == "__main__":
-    df_train = (
-        pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-    )
-    ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")[
-        "Calories"
-    ]
+    df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
+    ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
     df_test = pd.read_csv(PATH_TEST).set_index("id")
 
     df_train = convert_sex(df_train)
@@ -40,7 +36,7 @@ if __name__ == "__main__":
             )
 
         potential_combinations = [list(c) for c in potential_combinations]
-        print(f'{len(potential_combinations)=}')
+        print(f"{len(potential_combinations)=}")
         combinations = []
         for combination in potential_combinations:
             nuniques = int(ser_nunique_by_feature.loc[combination].product())
@@ -57,7 +53,7 @@ if __name__ == "__main__":
     # N_SPLITS = 5  # default: 5
 
     N_OUTER_FOLDS = 5  # for training
-    N_INNER_FOLDS = 4 # for TE
+    N_INNER_FOLDS = 4  # for TE
     SMOOTH = 0
 
     # results = []
@@ -69,17 +65,21 @@ if __name__ == "__main__":
         train_folds = []
         val_folds = []
         test_folds = []
-        for outer_fold_no, (train_idx, val_idx) in enumerate(KFold(shuffle=True, random_state=42, n_splits=N_OUTER_FOLDS).split(df_train)):
+        for outer_fold_no, (train_idx, val_idx) in enumerate(
+            KFold(shuffle=True, random_state=42, n_splits=N_OUTER_FOLDS).split(df_train)
+        ):
             df_train_current_fold = df_train_current.iloc[train_idx].copy()
             df_val_current_fold = df_train_current.iloc[val_idx].copy()
 
             te = CustomTargetEncoder(
                 cols=feature_list,
                 agg="mean",
-                kfold_splits=KFold(shuffle=True, random_state=42, n_splits=N_INNER_FOLDS).split(df_train_current_fold),
+                kfold_splits=KFold(
+                    shuffle=True, random_state=42, n_splits=N_INNER_FOLDS
+                ).split(df_train_current_fold),
                 smooth=SMOOTH,
                 fillna=False,
-                )
+            )
             te.fit(df_train_current_fold, ser_targets_train)
             ser_te_train = te.transform(df_train_current_fold)
             ser_te_val = te.transform(df_val_current_fold)
@@ -93,7 +93,9 @@ if __name__ == "__main__":
             val_folds.append(ser_te_val)
             test_folds.append(ser_te_test)
 
-        filename_prefix = f"{ser_te_train.name}_{N_OUTER_FOLDS}_outer_{N_INNER_FOLDS}_inner_folds"  # noqa
+        filename_prefix = (
+            f"{ser_te_train.name}_{N_OUTER_FOLDS}_outer_{N_INNER_FOLDS}_inner_folds"  # noqa
+        )
         metadata = {
             "column_name": ser_te_train.name,
             "filename_prefix": filename_prefix,
@@ -107,7 +109,6 @@ if __name__ == "__main__":
             "smooth": SMOOTH,
             "created_at": pd.Timestamp.now(),
             "created_by_script": os.path.basename(__file__),
-
             "fillna": False,
         }
 
@@ -127,9 +128,15 @@ if __name__ == "__main__":
             ser_te_train = train_folds[i]
             ser_te_val = val_folds[i]
             ser_te_test = test_folds[i]
-            ser_te_train.to_frame().to_parquet(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_train_{i}.parquet")
-            ser_te_val.to_frame().to_parquet(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_val_{i}.parquet")
-            ser_te_test.to_frame().to_parquet(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_test_{i}.parquet")
+            ser_te_train.to_frame().to_parquet(
+                PATH_FEATURES_BY_FOLD / f"{filename_prefix}_train_{i}.parquet"
+            )
+            ser_te_val.to_frame().to_parquet(
+                PATH_FEATURES_BY_FOLD / f"{filename_prefix}_val_{i}.parquet"
+            )
+            ser_te_test.to_frame().to_parquet(
+                PATH_FEATURES_BY_FOLD / f"{filename_prefix}_test_{i}.parquet"
+            )
             # ser_te_train.to_pickle(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_train_{i}.pkl")
             # ser_te_val.to_pickle(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_val_{i}.pkl")
             # ser_te_test.to_pickle(PATH_FEATURES_BY_FOLD / f"{filename_prefix}_test_{i}.pkl")

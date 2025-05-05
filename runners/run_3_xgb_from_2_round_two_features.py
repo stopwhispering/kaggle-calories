@@ -9,28 +9,34 @@ from trainers.metrics.metrics_lgbm import rmsle_lgbm
 from trainers.xgb_trainer import XGBTrainer
 
 time_start_overall = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
 df_train = convert_sex(df_train)
 df_test = convert_sex(df_test)
 
-df_train['Heart_Rate'] = df_train['Heart_Rate'].round().astype(np.float64)  # same as test
-df_train['Height'] = df_train['Height'].round().astype(np.float64)  # same as test
+df_train["Heart_Rate"] = (
+    df_train["Heart_Rate"].round().astype(np.float64)
+)  # same as test
+df_train["Height"] = df_train["Height"].round().astype(np.float64)  # same as test
 
 duration_loading_data = str(int(time.time() - time_start_overall))
 print(f"{duration_loading_data=}")
 time_start_training = time.time()
 
 params_xgb = {
-    "eval_metric": 'rmsle',
+    "eval_metric": "rmsle",
 }
 
 trainer = XGBTrainer(
-    params={"random_state": 42, "verbosity": 0, "n_estimators": 5_000, "early_stopping_rounds": 100} | params_xgb,
+    params={
+        "random_state": 42,
+        "verbosity": 0,
+        "n_estimators": 5_000,
+        "early_stopping_rounds": 100,
+    }
+    | params_xgb,
     scoring_fn=root_mean_squared_log_error,
     early_stop=True,
     use_gpu=True,
@@ -49,12 +55,18 @@ duration_training = time.time() - time_start_training
 print(f"{score=:.5f}, {best_iterations=}, {duration_training=}")
 
 duration_all = str(int(time.time() - time_start_overall))
-filename_prefix = __file__.split('\\')[-1][:-3]  # remove .py
+filename_prefix = __file__.split("\\")[-1][:-3]  # remove .py
 if filename_prefix.startswith("run_"):
     filename_prefix = filename_prefix[4:]
-df_oof_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl")
-df_test_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl")
-open(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a").close()
+df_oof_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl"
+)
+df_test_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl"
+)
+open(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a"
+).close()
 
 # df_submission = df_test_predictions['pred'].reset_index().rename(
 #     columns={"pred": "Calories"}

@@ -8,9 +8,7 @@ from trainers.lgbm_trainer import LGBMTrainer
 from trainers.metrics.metrics_lgbm import rmsle_lgbm
 
 time_start_overall = time.time()
-df_train = (
-    pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
-)
+df_train = pd.read_csv(PATH_TRAIN).set_index("id").drop("Calories", axis=1)
 ser_targets_train = pd.read_csv(PATH_TRAIN).set_index("id")["Calories"]
 df_test = pd.read_csv(PATH_TEST).set_index("id")
 
@@ -22,7 +20,7 @@ print(f"{duration_loading_data=}")
 time_start_training = time.time()
 
 params_lgbm = {
-    "metric": 'custom',   # for rmsle
+    "metric": "custom",  # for rmsle
 }
 
 trainer = LGBMTrainer(
@@ -46,12 +44,18 @@ duration_training = time.time() - time_start_training
 print(f"{score=:.5f}, {best_iterations=}, {duration_training=}")
 
 duration_all = str(int(time.time() - time_start_overall))
-filename_prefix = __file__.split('\\')[-1][:-3]  # remove .py
+filename_prefix = __file__.split("\\")[-1][:-3]  # remove .py
 if filename_prefix.startswith("run_"):
     filename_prefix = filename_prefix[4:]
-df_oof_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl")
-df_test_predictions["pred"].to_pickle(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl")
-open(PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a").close()
+df_oof_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_oof.pkl"
+)
+df_test_predictions["pred"].to_pickle(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_test.pkl"
+)
+open(
+    PATH_PREDS_FOR_ENSEMBLES / f"{filename_prefix}_{score=:.5f}_{duration_all=}", f"a"
+).close()
 
 # df_submission = df_test_predictions['pred'].reset_index().rename(
 #     columns={"pred": "Calories"}

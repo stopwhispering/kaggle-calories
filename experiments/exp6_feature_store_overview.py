@@ -10,14 +10,12 @@ df_metadata, df_metadata_by_folds = feature_store.overview()
 print(df_metadata)
 
 df_train_features, df_test_features = feature_store.read_features(
-    criteria={'type': ('autofe',), 'subtype': ('autofe Minus',)}
+    criteria={"type": ("autofe",), "subtype": ("autofe Minus",)}
 )
-print(f'{df_train_features.shape=}, {df_test_features.shape=}')
-
-
+print(f"{df_train_features.shape=}, {df_test_features.shape=}")
 
 
 df_train_features, df_test_features = feature_store.read_features(
-    criteria={'type': ('autofe',)}
+    criteria={"type": ("autofe",)}
 )
-print(f'{df_train_features.shape=}, {df_test_features.shape=}')
+print(f"{df_train_features.shape=}, {df_test_features.shape=}")

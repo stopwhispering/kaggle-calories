@@ -16,3 +16,6 @@ delme*
 *.csv
 cache/
 features_by_fold
+kaggle-dataset
+*.whl
+feature-dataset-upload
