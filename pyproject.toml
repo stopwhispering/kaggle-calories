@@ -26,7 +26,8 @@ dependencies = [
     "pip (>=25.0.1,<26.0.0)",
     "feature-engine (>=1.8.3,<2.0.0)",
     "fastparquet (>=2024.11.0,<2025.0.0)",
-    "catboost (>=1.2.8,<2.0.0)"
+    "catboost (>=1.2.8,<2.0.0)",
+    "cupy-cuda12x (>=13.4.1,<14.0.0)"
 ]
 
 
