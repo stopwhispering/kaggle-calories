@@ -10,7 +10,7 @@ from calories.constants import (
 from my_ml_util.ensembling.hill_climbing import (
     HillClimber,
     score_multiple_rmse,
-    # score_multiple_rmsle,
+    score_multiple_rmsle,
 )
 import numpy as np
 import time
@@ -41,6 +41,10 @@ for oof_file in oof_files:
         )
         assert test_file.exists()
 
+    # test_file = PATH_PREDS_FOR_ENSEMBLES / (
+    #     oof_file.stem.replace("_oof", "_test") + ".pkl"
+    # )
+
     print(f"Using test file {test_file.name}.")
     # assert test_file in test_files, f"Test file not found for {oof_file.name}"
 
@@ -56,6 +60,12 @@ for oof_file in oof_files:
     ser_oof.name = name
     ser_test.name = name
 
+    if all_test:
+        if not ser_test.index.equals(all_test[0].index):
+            print(f"Warning: {ser_test.index} != {all_test[0].index} ({ser_test.name=}). Replacing index.")
+            ser_test.index = all_test[0].index
+        # assert ser_test.index.equals(all_test[0].index)
+
     all_oof.append(ser_oof)
     all_test.append(ser_test)
 
@@ -66,19 +76,19 @@ df_oof = df_oof.clip(lower=0)
 df_test = df_test.clip(lower=0)
 
 
-# todooooooooo todo
-# df_oof = df_oof.iloc[:, :3]
 weights, df_weights = HillClimber(
-    # score_multiple_function=score_multiple_rmsle,
-    score_multiple_function=score_multiple_rmse,
+    score_multiple_function=score_multiple_rmsle,
+    # score_multiple_function=score_multiple_rmse,
     use_negative_weights=True,
-    tol=0.00001,  # 0.0001# 0.0001,
-    # scoring_func=root_mean_squared_log_error,
-    scoring_func=root_mean_squared_error,
+    tol=0.000001,  # 0.0001# 0.0001,
+    scoring_func=root_mean_squared_log_error,
+    # scoring_func=root_mean_squared_error,
     use_gpu=True,
 ).run(
-    np.log1p(df_oof),
-    np.log1p(ser_targets_train)
+    # np.log1p(df_oof),
+    # np.log1p(ser_targets_train)
+    df_oof,
+    ser_targets_train
 )
 print(weights)
 print(df_weights)
@@ -98,8 +108,9 @@ date_time_str = pd.to_datetime("now").strftime("%Y-%m-%d_%H-%M-%S")
 filename = f"hc_ensemble_{date_time_str}_{final_score:.5f}.csv"
 
 ser_test_ensemble.name = "Calories"
-df_submission = ser_test_ensemble.reset_index().rename(columns={"pred": "Calories"})
-df_submission["Calories"] = np.clip(df_submission["Calories"], 1, 314)
+ser_test_ensemble = np.clip(ser_test_ensemble, 1, 314)
+df_submission = ser_test_ensemble.reset_index().rename({'index': 'id'}, axis=1)# .rename(columns={"pred": "Calories"})
+# df_submission["Calories"] = np.clip(df_submission["Calories"], 1, 314).rename({'index': 'id'}, axis=1)
 df_submission.to_csv(PATH_ENSEMBLE_SUBMISSIONS / filename, index=False)
 
 df_weights.to_csv(

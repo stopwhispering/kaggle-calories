@@ -547,6 +547,18 @@ files = [
 six = ">=1.4.0"
 
 [[package]]
+name = "et-xmlfile"
+version = "2.0.0"
+description = "An implementation of lxml.xmlfile for the standard library"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa"},
+    {file = "et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54"},
+]
+
+[[package]]
 name = "fastparquet"
 version = "2024.11.0"
 description = "Python support for Parquet file format"
@@ -1428,6 +1440,21 @@ files = [
     {file = "nvidia_nccl_cu12-2.26.2.post1-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:65640d57dd2a20de11048f0a163dd6b6ba8ae97eb3bfc11d80d3c409566bfce7"},
     {file = "nvidia_nccl_cu12-2.26.2.post1-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:5ffda04fd1296a90aae76a7e9999d9d3d69ffcec6573109a286fdd2158599114"},
 ]
+
+[[package]]
+name = "openpyxl"
+version = "3.1.5"
+description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "openpyxl-3.1.5-py2.py3-none-any.whl", hash = "sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2"},
+    {file = "openpyxl-3.1.5.tar.gz", hash = "sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050"},
+]
+
+[package.dependencies]
+et-xmlfile = "*"
 
 [[package]]
 name = "optuna"
@@ -2845,7 +2872,56 @@ plotting = ["graphviz", "matplotlib"]
 pyspark = ["cloudpickle", "pyspark", "scikit-learn"]
 scikit-learn = ["scikit-learn"]
 
+[[package]]
+name = "xgboost-cpu"
+version = "3.0.0"
+description = "XGBoost Python Package"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "platform_machine == \"x86_64\" and (platform_system == \"Windows\" or platform_system == \"Linux\")"
+files = [
+    {file = "xgboost_cpu-3.0.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:1041c8594ebc3ee4cde6871d2fcd8eaa5c7a8b399de7caf5ae91749d5889d7c3"},
+    {file = "xgboost_cpu-3.0.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:1fd557fb2d2d71397f286fb1f7dd591289cf837a8ea2d2f5ce7bac1249bb947b"},
+    {file = "xgboost_cpu-3.0.0-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:708af2e7d644e122a93994a583a79802c7e092121091de8d674ba670c551fc68"},
+    {file = "xgboost_cpu-3.0.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:54f80f521ad73f5b861d840ab8ddd8ea4855d582081646dbf8d7ed7fa89bc132"},
+    {file = "xgboost_cpu-3.0.0-py3-none-win_amd64.whl", hash = "sha256:7b2553a922d0765c6b80105a0d6fc67f053e668ce5bba549abe789c67479feb2"},
+    {file = "xgboost_cpu-3.0.0.tar.gz", hash = "sha256:33614ea793447bf68b19214fca0eb11bac9158474a6e2b0a343dc4435c38d9e3"},
+]
+
+[package.dependencies]
+numpy = "*"
+scipy = "*"
+
+[package.extras]
+dask = ["dask", "distributed", "pandas"]
+pandas = ["pandas (>=1.2)"]
+plotting = ["graphviz", "matplotlib"]
+pyspark = ["cloudpickle", "pyspark", "scikit-learn"]
+scikit-learn = ["scikit-learn"]
+
+[[package]]
+name = "xgboost-distribution"
+version = "0.4.0"
+description = "XGBoost for probabilistic prediction."
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "xgboost_distribution-0.4.0-py2.py3-none-any.whl", hash = "sha256:934083f1b51e6ff13ff443b9fb4a226f75628b2e3cfb2af3f7694bc68ac464d4"},
+    {file = "xgboost_distribution-0.4.0.tar.gz", hash = "sha256:b6f86225f17cf207d4bbf76c7ed1f60549ad9afc74e243741d8f9f2c29c4dbe8"},
+]
+
+[package.dependencies]
+scikit-learn = "*"
+xgboost = {version = ">=3.0.0", optional = true, markers = "platform_machine != \"x86_64\" or platform_system != \"Windows\" and platform_system != \"Linux\" or extra == \"gpu\""}
+xgboost-cpu = {version = ">=3.0.0", markers = "platform_machine == \"x86_64\" and (platform_system == \"Windows\" or platform_system == \"Linux\")"}
+
+[package.extras]
+gpu = ["xgboost (>=3.0.0)"]
+testing = ["pandas", "pytest", "pytest-cov", "setuptools"]
+
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "e743d8914b4b2cfbe13ced775a7ef26ecbf22e724413ed1983eb1cc8cbc1ad30"
+content-hash = "4fdb32adaafe465b656f73ee54c27b25b475b51923f212a09138e58561032fcc"
