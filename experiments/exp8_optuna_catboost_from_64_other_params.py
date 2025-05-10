@@ -33,7 +33,7 @@ feature_store = FeatureStore(
 )
 df_train_features, df_test_features = feature_store.read_features(
     column_names=[
-        "Combine_Sex_Duration",
+        # "Combine_Sex_Duration",  # disabled in later runs of exp8
         "Multiply_Weight_Duration",
         "Plus_Age_Duration",
         "Multiply_Age_Duration",
@@ -47,7 +47,7 @@ df_train_features, df_test_features = feature_store.read_features(
         'Plus_Sex_Age',
         'Max_Age_Duration',
         'GroupByThenMean_Age_Duration',
-        'Combine_Duration_Heart_Rate',
+        # 'Combine_Duration_Heart_Rate',  # disabled in later runs of exp8
 
         # fs3
         "te_MEAN_Sex_Age_Body_Temp_not_folded_no_fillna",

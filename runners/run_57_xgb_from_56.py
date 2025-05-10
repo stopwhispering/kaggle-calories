@@ -32,26 +32,26 @@ feature_store = FeatureStore(
 )
 df_train_features, df_test_features = feature_store.read_features(
     column_names=[
-        "Combine_Sex_Duration",
+        # "Combine_Sex_Duration",
         "Multiply_Weight_Duration",
         "Plus_Age_Duration",
         "Multiply_Age_Duration",
-        "GroupByThenMean_Age_Height",
+        # "GroupByThenMean_Age_Height",
         "Divide_Sex_Age",
-        "GroupByThenRank_Sex_Weight",
+        # "GroupByThenRank_Sex_Weight",
         "Minus_Sex_Heart_Rate",
         "Multiply_Duration_Body_Temp",
 
         # fs9
         'Plus_Sex_Age',
         'Max_Age_Duration',
-        'GroupByThenMean_Age_Duration',
-        'Combine_Duration_Heart_Rate',
+        # 'GroupByThenMean_Age_Duration',
+        # 'Combine_Duration_Heart_Rate',
 
         # fs3
-        "te_MEAN_Sex_Age_Body_Temp_not_folded_no_fillna",
-        "te_MEAN_Age_Height_Duration_Body_Temp_not_folded_no_fillna",
-        "te_MEAN_Age_Weight_Duration_Heart_Rate_not_folded_no_fillna",
+        # "te_MEAN_Sex_Age_Body_Temp_not_folded_no_fillna",
+        # "te_MEAN_Age_Height_Duration_Body_Temp_not_folded_no_fillna",
+        # "te_MEAN_Age_Weight_Duration_Heart_Rate_not_folded_no_fillna",
         "te_MEAN_Age_Height_Weight_Heart_Rate_Body_Temp_not_folded_no_fillna",
         "te_MEAN_Sex_Age_Height_Weight_Heart_Rate_Body_Temp_not_folded_no_fillna",
         "te_MEAN_Age_Height_Weight_Duration_Heart_Rate_not_folded_no_fillna",
@@ -118,6 +118,7 @@ print(f"{score=:.5f}, {best_iterations=}, {duration_training=}")
 trainer.params_xgb['n_estimators'] = int(np.mean(best_iterations) * 1.2)
 print(f'{trainer.params_xgb['n_estimators']=}')
 
+
 df_test_predictions_from_full = trainer.train_on_full(
     df_train=df_train,
     # df_train=pd.concat([df_train, df_train_features_dummy], axis=1),
@@ -125,7 +126,6 @@ df_test_predictions_from_full = trainer.train_on_full(
     ser_targets_train=ser_targets_train,
     df_test=df_test,
 )
-
 duration_all = str(int(time.time() - time_start_overall))
 filename_prefix = __file__.split("\\")[-1][:-3]  # remove .py
 if filename_prefix.startswith("run_"):
